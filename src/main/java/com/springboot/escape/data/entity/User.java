@@ -26,7 +26,7 @@ public class User implements UserDetails {
     private long id;
 
     @Column(nullable = false, unique = true)
-    private String uid;
+    private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
@@ -46,30 +46,30 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.uid;
+        return this.email;
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return false;
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return false;
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return false;
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return false;
     }
 }

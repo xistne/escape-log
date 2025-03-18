@@ -26,14 +26,11 @@ public class SecurityConfiguration {
                 .httpBasic(httpbc -> httpbc
                         .disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/sign-in", "/auth/sign-up",
+                                "/auth/reissue", "/auth/exception").permitAll()
                         .requestMatchers("/**exception**").permitAll()
-                        .requestMatchers(
-                                "/v3/api-docs/**",  // Swagger 3.x API 문서 엔드포인트
-                                "/swagger-ui/**",   // Swagger UI 기본 경로
-                                "/swagger-resources/**",
-                                "/webjars/**",
-                                "/sign-api/exception"
-                        ).permitAll()
+                        .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**")
+                        .permitAll()
                         .anyRequest().hasRole("ADMIN"))
                 .exceptionHandling(ex -> {
                     ex.accessDeniedHandler(new CustomAccessDeniedHandler());
@@ -44,9 +41,9 @@ public class SecurityConfiguration {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/v2/api-docs",
+        return (web) -> web.ignoring().requestMatchers(
                 "/swagger-resources/**", "/swagger-ui.html", "/webjars/**",
-                "/swagger/**");
+                "/swagger/**", "/auth/exception");
     }
 
 }
