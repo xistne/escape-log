@@ -9,4 +9,5 @@ public interface AuthService {
     SignUpResponseDto signUp(SignUpRequestDto signUpRequestDto);
     SignInResponseDto signIn(SignInRequestDto signInRequestDto);
     SignInResponseDto reissue(String refreshToken);
+    String signOut(String refreshToken, String accessToken);
 }

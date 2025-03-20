@@ -28,13 +28,19 @@ public class AuthController {
     }
 
     @PostMapping(value = "/sign-up")
-    public ResponseEntity<SignUpResponseDto> SignUpResponseDto(@RequestBody SignUpRequestDto signUpRequestDto) {
+    public ResponseEntity<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
         return ResponseEntity.ok(authService.signUp(signUpRequestDto));
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<SignInResponseDto> reissue(@RequestHeader(value="REFRESH-TOKEN") String refreshToken ) {
+    public ResponseEntity<SignInResponseDto> reissue(@RequestHeader(value="REFRESH-TOKEN") String refreshToken) {
         return ResponseEntity.ok(authService.reissue(refreshToken));
+    }
+
+    @PostMapping("/sign-out")
+    public ResponseEntity<String> signOut(@RequestHeader(value="REFRESH-TOKEN") String refreshToken,
+                                          @RequestHeader(value="X-AUTH-TOKEN") String accessToken) {
+        return ResponseEntity.ok(authService.signOut(refreshToken, accessToken));
     }
 
     @GetMapping(value = "/exception")

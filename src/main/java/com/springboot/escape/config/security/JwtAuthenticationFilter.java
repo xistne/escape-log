@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             LOGGER.info("[doFilterInternal] token 값 추출 완료. token : {}", token);
             if (token == null) throw new JwtException("access token is null");
             LOGGER.info("[doFilterInternal] token 값 유효성 체크 시작");
-            if (jwtTokenProvider.validateToken(token)) {
+            if (jwtTokenProvider.isValidToken(token) && !jwtTokenProvider.isTokenBlackList(token)) {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 LOGGER.info("[doFilterInternal] token 값 유효성 체크 완료");

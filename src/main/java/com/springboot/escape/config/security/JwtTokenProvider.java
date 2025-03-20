@@ -82,7 +82,7 @@ public class JwtTokenProvider {
                 .signWith(key)
                 .compact();
         redisTemplate.opsForValue().set(
-                email,
+                "refresh:"+email,
                 refreshToken,
                 refreshTokenExpiration,
                 TimeUnit.MILLISECONDS
@@ -110,14 +110,27 @@ public class JwtTokenProvider {
         return request.getHeader("X-AUTH-TOKEN");
     }
 
-    public boolean validateToken(String token) {
-        LOGGER.info("[resolveToken] 토큰 유효 체크 시작");
+    public boolean isValidToken(String token) {
+        LOGGER.info("[isValidToken] 토큰 유효 체크 시작");
         try {
             Jws<Claims> claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
             return !claims.getPayload().getExpiration().before(new Date());
         } catch (Exception e) {
-            LOGGER.info("[validateToken] 토큰 유효 체크 예외 발생 : ");
+            LOGGER.info("[isValidToken] 토큰 유효 체크 예외 발생 : ");
             return false;
         }
+    }
+    public boolean isTokenBlackList(String token) {
+        if (redisTemplate.opsForValue().get("blacklist:"+token) != null) {
+            throw new RuntimeException("Access Token has been blacklisted");
+        }
+        return false;
+    }
+
+    public long getExpiration(String token) {
+        Jws<Claims> claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+        Date expiration = claims.getPayload().getExpiration();
+        long now = new Date().getTime();
+        return Math.max(expiration.getTime() - now, 1);
     }
 }

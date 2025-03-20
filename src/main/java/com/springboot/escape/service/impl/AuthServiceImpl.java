@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -88,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public SignInResponseDto reissue(String refreshToken) {
         String userEmail = jwtTokenProvider.getUserEmailFromToken(refreshToken);
-        String savedRefreshToken = redisTemplate.opsForValue().get(userEmail);
+        String savedRefreshToken = redisTemplate.opsForValue().get("refresh:"+userEmail);
 
         if (!refreshToken.equals(savedRefreshToken)) {
             throw new RuntimeException();
@@ -107,6 +108,33 @@ public class AuthServiceImpl implements AuthService {
         setSuccessResult(signInResponseDto);
 
         return signInResponseDto;
+    }
+
+    @Override
+    public String signOut(String refreshToken, String accessToken) {
+        // 1. accessToken 검증
+        if (!jwtTokenProvider.isValidToken(accessToken)) {
+            throw new RuntimeException("Invalid AccessToken");
+        }
+        // 2. refresh Token 검증
+        // 2-1. accessToken으로 사용자 정보 가져옴
+        String userEmail = jwtTokenProvider.getUserEmailFromToken(accessToken);
+        // 2-2. 해당 사용자 정보로 refershToken 가져옴
+        String selectedRefreshToken = this.redisTemplate.opsForValue().get("refresh:" + userEmail);
+        // 2-3. 받은refresh Token과 조회한 refreshToken이 같은지 확인
+        if (!refreshToken.equals(selectedRefreshToken)) {
+            throw new RuntimeException("Invalid RefreshToken");
+        }
+        // 3. redis에 refresh Token 삭제
+        this.redisTemplate.delete("refresh:" + userEmail);
+        // 4. redis blacklist에 accessToken 추가
+        this.redisTemplate.opsForValue().set(
+                "blacklist:"+accessToken,
+                "logout",
+                this.jwtTokenProvider.getExpiration(accessToken),
+                TimeUnit.MILLISECONDS
+        );
+        return "Success";
     }
 
     private void setSuccessResult(SignUpResponseDto result) {
