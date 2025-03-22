@@ -4,8 +4,8 @@ import com.springboot.escape.data.dto.SignInRequestDto;
 import com.springboot.escape.data.dto.SignInResponseDto;
 import com.springboot.escape.data.dto.SignUpRequestDto;
 import com.springboot.escape.data.dto.SignUpResponseDto;
+import com.springboot.escape.exception.AuthErrorCode;
 import com.springboot.escape.service.AuthService;
-import com.springboot.escape.service.impl.AuthServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +45,6 @@ public class AuthController {
 
     @GetMapping(value = "/exception")
     public void exception() {
-        throw new RuntimeException("접근이 금지되었습니다.");
+        throw AuthErrorCode.FORBIDDEN_ACCESS.defaultException();
     }
 }

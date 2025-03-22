@@ -1,5 +1,6 @@
 package com.springboot.escape.config.security;
 
+import com.springboot.escape.exception.AuthErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -122,7 +123,7 @@ public class JwtTokenProvider {
     }
     public boolean isTokenBlackList(String token) {
         if (redisTemplate.opsForValue().get("blacklist:"+token) != null) {
-            throw new RuntimeException("Access Token has been blacklisted");
+            throw AuthErrorCode.BLACKLISTED_ACCESS_TOKEN.defaultException();
         }
         return false;
     }

@@ -7,6 +7,7 @@ import com.springboot.escape.data.dto.SignUpRequestDto;
 import com.springboot.escape.data.dto.SignUpResponseDto;
 import com.springboot.escape.data.entity.User;
 import com.springboot.escape.data.repository.UserRepository;
+import com.springboot.escape.exception.AuthErrorCode;
 import com.springboot.escape.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.getByEmail(signInRequestDto.getEmail());
         LOGGER.info("[signIn] Id : {}", signInRequestDto.getEmail());
         if (!passwordEncoder.matches(signInRequestDto.getPassword(), user.getPassword())) {
-            throw new RuntimeException();
+            throw AuthErrorCode.INVALID_PASSWORD.defaultException();
         }
         LOGGER.info("[signIn] 패스워드 일치");
         LOGGER.info("[signIn] SignInResponseDto 객체 생성");
@@ -92,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
         String savedRefreshToken = redisTemplate.opsForValue().get("refresh:"+userEmail);
 
         if (!refreshToken.equals(savedRefreshToken)) {
-            throw new RuntimeException();
+            throw AuthErrorCode.INVALID_REFRESH_TOKEN.defaultException();
         }
 
         User user = userRepository.getByEmail(userEmail);
@@ -114,7 +115,7 @@ public class AuthServiceImpl implements AuthService {
     public String signOut(String refreshToken, String accessToken) {
         // 1. accessToken 검증
         if (!jwtTokenProvider.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid AccessToken");
+            throw AuthErrorCode.INVALID_ACCESS_TOKEN.defaultException();
         }
         // 2. refresh Token 검증
         // 2-1. accessToken으로 사용자 정보 가져옴
@@ -123,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
         String selectedRefreshToken = this.redisTemplate.opsForValue().get("refresh:" + userEmail);
         // 2-3. 받은refresh Token과 조회한 refreshToken이 같은지 확인
         if (!refreshToken.equals(selectedRefreshToken)) {
-            throw new RuntimeException("Invalid RefreshToken");
+            throw AuthErrorCode.INVALID_REFRESH_TOKEN.defaultException();
         }
         // 3. redis에 refresh Token 삭제
         this.redisTemplate.delete("refresh:" + userEmail);
