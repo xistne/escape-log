@@ -32,8 +32,9 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<ApiResponse<SignInResponseDto>> reissue(@RequestHeader(value="REFRESH-TOKEN") String refreshToken) {
-        return ResponseEntity.ok(ApiResponse.success(authService.reissue(refreshToken), HttpStatus.OK));
+    public ResponseEntity<ApiResponse<SignInResponseDto>> reissue(@RequestHeader(value="REFRESH-TOKEN") String refreshToken,
+                                                                  @RequestHeader(value="X-AUTH-TOKEN") String accessToken) {
+        return ResponseEntity.ok(ApiResponse.success(authService.reissue(refreshToken, accessToken), HttpStatus.OK));
     }
 
     @PostMapping("/sign-out")

@@ -80,11 +80,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public SignInResponseDto reissue(String refreshToken) {
+    public SignInResponseDto reissue(String refreshToken, String accessToken) {
         String userEmail = jwtTokenProvider.getUserEmailFromRefreshToken(refreshToken);
         String savedRefreshToken = redisTemplate.opsForValue().get("refresh:"+userEmail);
+        // 1.저장된 refreshToken과 일치하는지 검사
         if (!refreshToken.equals(savedRefreshToken)) {
             throw AuthErrorCode.INVALID_REFRESH_TOKEN.defaultException();
+        }
+        // 3. accessToken이 유요할 경우 redis blacklist에 accessToken 추가
+        if (jwtTokenProvider.isValidToken(accessToken)) {
+            this.redisTemplate.opsForValue().set(
+                    "blacklist:"+accessToken,
+                    "logout",
+                    this.jwtTokenProvider.getExpiration(accessToken),
+                    TimeUnit.MILLISECONDS
+            );
         }
         User user = userRepository.getByEmail(userEmail);
         String createdAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRoles());
