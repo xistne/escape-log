@@ -6,8 +6,8 @@ import com.springboot.escape.data.dto.SignUpRequestDto;
 import com.springboot.escape.data.dto.SignUpResponseDto;
 
 public interface AuthService {
-    SignUpResponseDto signUp(SignUpRequestDto signUpRequestDto);
+    void signUp(SignUpRequestDto signUpRequestDto);
     SignInResponseDto signIn(SignInRequestDto signInRequestDto);
-    SignInResponseDto reissue(String refreshToken);
-    String signOut(String refreshToken, String accessToken);
+    SignInResponseDto reissue(String refreshToken, String accessToken);
+    void signOut(String refreshToken, String accessToken);
 }

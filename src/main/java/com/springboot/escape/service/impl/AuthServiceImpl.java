@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public SignUpResponseDto signUp(SignUpRequestDto signUpRequestDto) {
+    public void signUp(SignUpRequestDto signUpRequestDto) {
         LOGGER.info("[signUp] 회원 가입 정보 전달");
         User user;
         if (signUpRequestDto.getRole().equalsIgnoreCase("admin")) {
@@ -54,17 +54,12 @@ public class AuthServiceImpl implements AuthService {
                     .build();
         }
         User savedUser = userRepository.save(user);
-        SignUpResponseDto signUpResponseDto = new SignUpResponseDto();
-
-        LOGGER.info("[signUp] userEntity 값이 들어왔는지 확인 후 결과값 주입");
         if (!savedUser.getName().isEmpty()) {
             LOGGER.info("[signUp] 정상 처리 완료");
-            setSuccessResult(signUpResponseDto);
         } else {
             LOGGER.info("[signUp] 실패 처리 완료");
-            setFailResult(signUpResponseDto);
+            new RuntimeException("회원 가입 실패");
         }
-        return signUpResponseDto;
     }
 
     @Override
@@ -77,42 +72,32 @@ public class AuthServiceImpl implements AuthService {
         }
         LOGGER.info("[signIn] 패스워드 일치");
         LOGGER.info("[signIn] SignInResponseDto 객체 생성");
-        SignInResponseDto signInResponseDto = SignInResponseDto.builder()
+
+        return SignInResponseDto.builder()
                 .access_token(jwtTokenProvider.createAccessToken(String.valueOf(user.getEmail()),user.getRoles()))
                 .refresh_token(jwtTokenProvider.createRefreshToken(String.valueOf(user.getEmail())))
                 .build();
-        LOGGER.info("[signIn] SignInResponseDto 객체에 값 주입");
-        setSuccessResult(signInResponseDto);
-
-        return signInResponseDto;
     }
 
     @Override
     public SignInResponseDto reissue(String refreshToken) {
         String userEmail = jwtTokenProvider.getUserEmailFromRefreshToken(refreshToken);
         String savedRefreshToken = redisTemplate.opsForValue().get("refresh:"+userEmail);
-
         if (!refreshToken.equals(savedRefreshToken)) {
             throw AuthErrorCode.INVALID_REFRESH_TOKEN.defaultException();
         }
-
         User user = userRepository.getByEmail(userEmail);
         String createdAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRoles());
         String createdRefreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
 
-
-        SignInResponseDto signInResponseDto = SignInResponseDto.builder()
+        return SignInResponseDto.builder()
                 .access_token(createdAccessToken)
                 .refresh_token(createdRefreshToken)
                 .build();
-
-        setSuccessResult(signInResponseDto);
-
-        return signInResponseDto;
     }
 
     @Override
-    public String signOut(String refreshToken, String accessToken) {
+    public void signOut(String refreshToken, String accessToken) {
         // 1. accessToken 검증
         if (!jwtTokenProvider.isValidToken(accessToken)) {
             throw AuthErrorCode.INVALID_ACCESS_TOKEN.defaultException();
@@ -135,16 +120,5 @@ public class AuthServiceImpl implements AuthService {
                 this.jwtTokenProvider.getExpiration(accessToken),
                 TimeUnit.MILLISECONDS
         );
-        return "Success";
-    }
-
-    private void setSuccessResult(SignUpResponseDto result) {
-        result.setSuccess(true);
-        result.setMsg("Success");
-    }
-
-    private void setFailResult(SignUpResponseDto result) {
-        result.setSuccess(false);
-        result.setMsg("Fail");
     }
 }
