@@ -1,6 +1,7 @@
 package com.springboot.escape.config.security;
 
 import com.springboot.escape.exception.AuthErrorCode;
+import com.springboot.escape.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -91,23 +92,35 @@ public class JwtTokenProvider {
         return refreshToken;
     }
 
-    public Authentication getAuthentication(String token) {
+    public Authentication getAuthentication(String accessToken) {
         LOGGER.info("[getAuthentication] 토큰 인증 정보 조회 시작");
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserEmailFromToken(token));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserEmailFromAccessToken(accessToken));
         LOGGER.info("[getAuthentication] 토큰 인증 정보 조회 완료, UserDetails UserName : {}",
                 userDetails.getUsername());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUserEmailFromToken(String token) {
-        LOGGER.info("[getUsername] 토큰 기반 회원 구별 정보 추출");
-        String info = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
-        LOGGER.info("[getUsername] 토큰 기반 회원 구별 정보 추출 완료, info : {}", info);
-        return info;
+    public String getUserEmailFromAccessToken(String accessToken) {
+        return this.getUserEmailFromToken(accessToken, AuthErrorCode.INVALID_ACCESS_TOKEN);
+    }
+    public String getUserEmailFromRefreshToken(String refreshToken) {
+        return this.getUserEmailFromToken(refreshToken, AuthErrorCode.INVALID_REFRESH_TOKEN);
     }
 
-    public String resolveToken(HttpServletRequest request) {
-        LOGGER.info("[resolveToken] HTTP 헤더에서 Token 값 추출");
+    private String getUserEmailFromToken(String token, ErrorCode errorCode) {
+        LOGGER.info("[getUsername] 토큰 기반 회원 구별 정보 추출");
+        try {
+            String info = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
+            LOGGER.info("[getUsername] 토큰 기반 회원 구별 정보 추출 완료, info : {}", info);
+            return info;
+        } catch (JwtException e) {
+            LOGGER.info("[getUsername] 토큰 기반 회원 구별 정보 추출 실패, error : {}", e.getMessage());
+            throw errorCode.defaultException(e);
+        }
+    }
+
+    public String resolveAccessToken(HttpServletRequest request) {
+        LOGGER.info("[resolveAccessToken] HTTP 헤더에서 Token 값 추출");
         return request.getHeader("X-AUTH-TOKEN");
     }
 

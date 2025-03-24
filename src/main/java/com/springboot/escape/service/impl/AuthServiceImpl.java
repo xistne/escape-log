@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public SignInResponseDto reissue(String refreshToken) {
-        String userEmail = jwtTokenProvider.getUserEmailFromToken(refreshToken);
+        String userEmail = jwtTokenProvider.getUserEmailFromRefreshToken(refreshToken);
         String savedRefreshToken = redisTemplate.opsForValue().get("refresh:"+userEmail);
 
         if (!refreshToken.equals(savedRefreshToken)) {
@@ -119,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
         }
         // 2. refresh Token 검증
         // 2-1. accessToken으로 사용자 정보 가져옴
-        String userEmail = jwtTokenProvider.getUserEmailFromToken(accessToken);
+        String userEmail = jwtTokenProvider.getUserEmailFromAccessToken(accessToken);
         // 2-2. 해당 사용자 정보로 refershToken 가져옴
         String selectedRefreshToken = this.redisTemplate.opsForValue().get("refresh:" + userEmail);
         // 2-3. 받은refresh Token과 조회한 refreshToken이 같은지 확인
