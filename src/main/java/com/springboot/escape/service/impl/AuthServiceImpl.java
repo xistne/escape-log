@@ -4,10 +4,10 @@ import com.springboot.escape.config.security.JwtTokenProvider;
 import com.springboot.escape.data.dto.SignInRequestDto;
 import com.springboot.escape.data.dto.SignInResponseDto;
 import com.springboot.escape.data.dto.SignUpRequestDto;
-import com.springboot.escape.data.dto.SignUpResponseDto;
 import com.springboot.escape.data.entity.User;
 import com.springboot.escape.data.repository.UserRepository;
 import com.springboot.escape.exception.AuthErrorCode;
+import com.springboot.escape.exception.UserErrorCode;
 import com.springboot.escape.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
             LOGGER.info("[signUp] 정상 처리 완료");
         } else {
             LOGGER.info("[signUp] 실패 처리 완료");
-            throw new RuntimeException("회원 가입 실패");
+            throw UserErrorCode.SIGN_UP_FAILED.defaultException();
         }
     }
 
