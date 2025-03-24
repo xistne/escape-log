@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
             LOGGER.info("[signUp] 정상 처리 완료");
         } else {
             LOGGER.info("[signUp] 실패 처리 완료");
-            new RuntimeException("회원 가입 실패");
+            throw new RuntimeException("회원 가입 실패");
         }
     }
 
