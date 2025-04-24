@@ -37,8 +37,8 @@ public class SecurityConfiguration {
                         .disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(requestMatcherHolder.getRequestMatchersByMinRole(null)).permitAll()
-                        .requestMatchers(requestMatcherHolder.getRequestMatchersByMinRole(RoleEnum.ADMIN)).hasAuthority(RoleEnum.ADMIN.name())
-                        .requestMatchers(requestMatcherHolder.getRequestMatchersByMinRole(RoleEnum.USER)).hasAnyAuthority(RoleEnum.ADMIN.name(), RoleEnum.USER.name())
+                        .requestMatchers(requestMatcherHolder.getRequestMatchersByMinRole(RoleEnum.ADMIN)).hasAuthority(RoleEnum.ADMIN.getAuthority())
+                        .requestMatchers(requestMatcherHolder.getRequestMatchersByMinRole(RoleEnum.USER)).hasAnyAuthority(RoleEnum.ADMIN.getAuthority(), RoleEnum.USER.getAuthority())
                         .anyRequest().hasAuthority(RoleEnum.ADMIN.name()))
                 .exceptionHandling(ex -> {
                     ex.accessDeniedHandler(new CustomAccessDeniedHandler());

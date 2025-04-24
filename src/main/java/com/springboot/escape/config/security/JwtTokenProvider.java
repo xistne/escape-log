@@ -1,5 +1,6 @@
 package com.springboot.escape.config.security;
 
+import com.springboot.escape.data.entity.RoleEnum;
 import com.springboot.escape.exception.AuthErrorCode;
 import com.springboot.escape.exception.ErrorCode;
 import io.jsonwebtoken.*;
@@ -53,13 +54,16 @@ public class JwtTokenProvider {
         LOGGER.info("[init] JwtTokenProvider 내 secretKey 초기화 완료");
     }
 
-    public String createAccessToken(String email, List<String> roles) {
+    public String createAccessToken(String email, List<RoleEnum> roles) {
         LOGGER.info("[createToken] 토큰 생성 시작");
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + accessTokenExpiration);
+        List<String> roleAuthorities = roles.stream()
+                .map(roleEnum -> roleEnum.getAuthority())
+                .toList();
 
         ClaimsBuilder claims = Jwts.claims().subject(email);
-        claims.add("roles", roles);
+        claims.add("roles", roleAuthorities);
 
         String token = Jwts.builder()
                 .claims(claims.build())
