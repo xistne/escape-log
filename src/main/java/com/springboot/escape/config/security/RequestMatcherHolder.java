@@ -20,7 +20,7 @@ public class RequestMatcherHolder {
     private static final List<RequestInfo> REQUEST_INFO_LIST = List.of(
             // auth
             new RequestInfo(POST, "/auth/sign-in", null),
-            new RequestInfo(POST, "/auth/sign-up", null),
+            new RequestInfo(POST, "/users/sign-up", null),
             new RequestInfo(POST, "/auth/reissue", null),
             new RequestInfo(GET, "/auth/exception", null),
 

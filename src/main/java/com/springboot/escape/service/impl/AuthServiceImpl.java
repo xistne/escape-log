@@ -35,34 +35,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signUp(SignUpRequestDto signUpRequestDto) {
-        LOGGER.info("[signUp] 회원 가입 정보 전달");
-        User user;
-        if (signUpRequestDto.getRole().equalsIgnoreCase("admin")) {
-            user = User.builder()
-                    .email(signUpRequestDto.getEmail())
-                    .name(signUpRequestDto.getName())
-                    .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
-                    .roles(Collections.singletonList("ROLE_ADMIN"))
-                    .build();
-        } else {
-            user = User.builder()
-                    .email(signUpRequestDto.getEmail())
-                    .name(signUpRequestDto.getName())
-                    .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
-                    .roles(Collections.singletonList("ROLE_USER"))
-                    .build();
-        }
-        User savedUser = userRepository.save(user);
-        if (!savedUser.getName().isEmpty()) {
-            LOGGER.info("[signUp] 정상 처리 완료");
-        } else {
-            LOGGER.info("[signUp] 실패 처리 완료");
-            throw UserErrorCode.SIGN_UP_FAILED.defaultException();
-        }
-    }
-
-    @Override
     public SignInResponseDto signIn(SignInRequestDto signInRequestDto) {
         LOGGER.info("[signIn] signDataHandler로 회원 정보 요청");
         User user = userRepository.getByEmail(signInRequestDto.getEmail());
