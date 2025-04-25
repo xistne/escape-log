@@ -3,6 +3,7 @@ package com.springboot.escape.data.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Table(name = "user")
 public class User extends BaseEntity implements UserDetails {
 
