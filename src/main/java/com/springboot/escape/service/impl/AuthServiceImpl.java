@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
         LOGGER.info("[signIn] SignInResponseDto 객체 생성");
 
         return SignInResponseDto.builder()
-                .access_token(jwtTokenProvider.createAccessToken(String.valueOf(user.getEmail()),user.getRoles()))
+                .access_token(jwtTokenProvider.createAccessToken(String.valueOf(user.getEmail()),user.getRole()))
                 .refresh_token(jwtTokenProvider.createRefreshToken(String.valueOf(user.getEmail())))
                 .build();
     }
@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
             );
         }
         User user = userRepository.findByEmail(userEmail).orElseThrow(AuthErrorCode.INVALID_REFRESH_TOKEN::defaultException);
-        String createdAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRoles());
+        String createdAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
         String createdRefreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
 
         return SignInResponseDto.builder()

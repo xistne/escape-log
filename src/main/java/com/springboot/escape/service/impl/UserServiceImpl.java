@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
                 .email(signUpRequestDto.getEmail())
                 .name(signUpRequestDto.getName())
                 .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
-                .roles(Collections.singletonList(userRoleEnum))
+                .role(userRoleEnum)
                 .build();
         User savedUser = userRepository.save(user);
         if (!savedUser.getName().isEmpty()) {

@@ -15,7 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
@@ -54,16 +55,13 @@ public class JwtTokenProvider {
         LOGGER.info("[init] JwtTokenProvider 내 secretKey 초기화 완료");
     }
 
-    public String createAccessToken(String email, List<RoleEnum> roles) {
+    public String createAccessToken(String email, RoleEnum role) {
         LOGGER.info("[createToken] 토큰 생성 시작");
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + accessTokenExpiration);
-        List<String> roleAuthorities = roles.stream()
-                .map(roleEnum -> roleEnum.getAuthority())
-                .toList();
 
         ClaimsBuilder claims = Jwts.claims().subject(email);
-        claims.add("roles", roleAuthorities);
+        claims.add("role", role.name());
 
         String token = Jwts.builder()
                 .claims(claims.build())
@@ -98,10 +96,12 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String accessToken) {
         LOGGER.info("[getAuthentication] 토큰 인증 정보 조회 시작");
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserEmailFromAccessToken(accessToken));
-        LOGGER.info("[getAuthentication] 토큰 인증 정보 조회 완료, UserDetails UserName : {}",
-                userDetails.getUsername());
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        String email = this.getUserEmailFromAccessToken(accessToken);
+        String role = this.getUserEmailFromRole(accessToken);
+        GrantedAuthority authority = new SimpleGrantedAuthority(role);
+        LOGGER.info("[getAuthentication] 토큰 인증 정보 조회 완료, email : {}, role : {}",
+                email, role);
+        return new UsernamePasswordAuthenticationToken(email, null, List.of(authority));
     }
 
     public String getUserEmailFromAccessToken(String accessToken) {
@@ -123,6 +123,17 @@ public class JwtTokenProvider {
         }
     }
 
+    private String getUserEmailFromRole(String token) {
+        LOGGER.info("[getUsername] 토큰 기반 회원 역할 추출");
+        try {
+            String role = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().get("role", String.class);
+            LOGGER.info("[getUsername] 토큰 기반 회원 역할 추출 완료, info : {}", role);
+            return role;
+        } catch (JwtException e) {
+            LOGGER.info("[getUsername] 토큰 기반 회원 역할 추출 실패, error : {}", e.getMessage());
+            throw AuthErrorCode.INVALID_ACCESS_TOKEN.defaultException(e);
+        }
+    }
     public String resolveAccessToken(HttpServletRequest request) {
         LOGGER.info("[resolveAccessToken] HTTP 헤더에서 Token 값 추출");
         return request.getHeader("X-AUTH-TOKEN");
