@@ -57,16 +57,8 @@ public class AuthServiceImpl implements AuthService {
         if (!refreshToken.equals(savedRefreshToken)) {
             throw AuthErrorCode.INVALID_REFRESH_TOKEN.defaultException();
         }
-        // TODO : 메서드로 분리
-        // 3. accessToken이 유요할 경우 redis blacklist에 accessToken 추가
-        if (jwtTokenProvider.isValidToken(accessToken)) {
-            this.redisTemplate.opsForValue().set(
-                    "blacklist:"+accessToken,
-                    "logout",
-                    this.jwtTokenProvider.getExpiration(accessToken),
-                    TimeUnit.MILLISECONDS
-            );
-        }
+        this.addBlackList(accessToken);
+
         User user = userRepository.findByEmail(userEmail).orElseThrow(AuthErrorCode.INVALID_REFRESH_TOKEN::defaultException);
         String createdAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
         String createdRefreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
@@ -76,7 +68,17 @@ public class AuthServiceImpl implements AuthService {
                 .refresh_token(createdRefreshToken)
                 .build();
     }
-
+    private void addBlackList(String accessToken) {
+        // DESC : accessToken이 유효할 경우 redis blacklist에 accessToken 추가
+        if (jwtTokenProvider.isValidToken(accessToken)) {
+            this.redisTemplate.opsForValue().set(
+                    "blacklist:"+accessToken,
+                    "logout",
+                    this.jwtTokenProvider.getExpiration(accessToken),
+                    TimeUnit.MILLISECONDS
+            );
+        }
+    }
     @Override
     public void signOut(String refreshToken, String accessToken) {
         // 1. accessToken 검증
