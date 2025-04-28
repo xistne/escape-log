@@ -20,6 +20,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         LOGGER.info("[loadUserByUsername] email : {}", username);
-        return userRepository.getByEmail(username);
+        return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("해당 이메일로 등록된 계정이 없습니다."));
     }
 }

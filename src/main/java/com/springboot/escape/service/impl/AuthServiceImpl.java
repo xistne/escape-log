@@ -3,7 +3,6 @@ package com.springboot.escape.service.impl;
 import com.springboot.escape.config.security.JwtTokenProvider;
 import com.springboot.escape.data.dto.SignInRequestDto;
 import com.springboot.escape.data.dto.SignInResponseDto;
-import com.springboot.escape.data.dto.SignUpRequestDto;
 import com.springboot.escape.data.entity.User;
 import com.springboot.escape.data.repository.UserRepository;
 import com.springboot.escape.exception.AuthErrorCode;
@@ -15,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -37,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public SignInResponseDto signIn(SignInRequestDto signInRequestDto) {
         LOGGER.info("[signIn] signDataHandler로 회원 정보 요청");
-        User user = userRepository.getByEmail(signInRequestDto.getEmail());
+        User user = userRepository.findByEmail(signInRequestDto.getEmail()).orElseThrow(UserErrorCode.SIGN_IN_USER_NOT_FOUND::defaultException);
         LOGGER.info("[signIn] Id : {}", signInRequestDto.getEmail());
         if (!passwordEncoder.matches(signInRequestDto.getPassword(), user.getPassword())) {
             throw AuthErrorCode.INVALID_PASSWORD.defaultException();
@@ -59,6 +57,7 @@ public class AuthServiceImpl implements AuthService {
         if (!refreshToken.equals(savedRefreshToken)) {
             throw AuthErrorCode.INVALID_REFRESH_TOKEN.defaultException();
         }
+        // TODO : 메서드로 분리
         // 3. accessToken이 유요할 경우 redis blacklist에 accessToken 추가
         if (jwtTokenProvider.isValidToken(accessToken)) {
             this.redisTemplate.opsForValue().set(
@@ -68,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
                     TimeUnit.MILLISECONDS
             );
         }
-        User user = userRepository.getByEmail(userEmail);
+        User user = userRepository.findByEmail(userEmail).orElseThrow(AuthErrorCode.INVALID_REFRESH_TOKEN::defaultException);
         String createdAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRoles());
         String createdRefreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
 
