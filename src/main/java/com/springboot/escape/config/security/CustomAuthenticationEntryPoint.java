@@ -1,7 +1,6 @@
 package com.springboot.escape.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.escape.data.dto.EntryPointErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;

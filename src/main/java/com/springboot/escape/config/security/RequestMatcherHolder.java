@@ -1,6 +1,6 @@
 package com.springboot.escape.config.security;
 
-import com.springboot.escape.data.entity.RoleEnum;
+import com.springboot.escape.domain.user.constant.RoleEnum;
 import jakarta.annotation.Nullable;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;

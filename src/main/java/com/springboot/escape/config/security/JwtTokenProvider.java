@@ -1,7 +1,7 @@
 package com.springboot.escape.config.security;
 
-import com.springboot.escape.data.entity.RoleEnum;
-import com.springboot.escape.exception.AuthErrorCode;
+import com.springboot.escape.domain.user.constant.RoleEnum;
+import com.springboot.escape.domain.auth.exception.AuthErrorCode;
 import com.springboot.escape.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
