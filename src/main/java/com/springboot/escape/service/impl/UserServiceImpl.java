@@ -33,6 +33,8 @@ public class UserServiceImpl implements UserService {
                 ? RoleEnum.ADMIN
                 : RoleEnum.USER;
 
+        userRepository.findByEmail(signUpRequestDto.getEmail()).orElseThrow(UserErrorCode.EMAIL_ALREADY_EXISTS::defaultException);
+
         User user = User.builder()
                 .email(signUpRequestDto.getEmail())
                 .name(signUpRequestDto.getName())

@@ -3,6 +3,7 @@ package com.springboot.escape.controller;
 import com.springboot.escape.data.dto.ApiResponse;
 import com.springboot.escape.data.dto.SignUpRequestDto;
 import com.springboot.escape.service.UserService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/sign-up")
-    public ResponseEntity<ApiResponse<Void>> signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
+    public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto) {
         userService.signUp(signUpRequestDto);
         return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK));
     }

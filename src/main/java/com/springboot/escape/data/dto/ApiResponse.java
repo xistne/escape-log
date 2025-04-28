@@ -1,11 +1,13 @@
 package com.springboot.escape.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.springboot.escape.exception.ApiSimpleError;
 import com.springboot.escape.exception.CustomException;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
+import java.util.List;
 
 @Builder
 public record ApiResponse<T>(
@@ -47,6 +49,23 @@ public record ApiResponse<T>(
                 .code(code)
                 .status(status.value())
                 .message(message)
+                .timestamp(Instant.now())
+                .build();
+        return ApiResponse.<Void>builder()
+                .success(false)
+                .status(status.value())
+                .error(error)
+                .timestamp(Instant.now())
+                .build();
+    }
+    // TODO : 다른 방법 생각
+    public static ApiResponse<Void> failure(String code, String message, HttpStatus status, List<ApiSimpleError> cause, String name) {
+        ApiResponseError error = ApiResponseError.builder()
+                .code(code)
+                .status(status.value())
+                .name(name)
+                .message(message)
+                .cause(cause)
                 .timestamp(Instant.now())
                 .build();
         return ApiResponse.<Void>builder()
