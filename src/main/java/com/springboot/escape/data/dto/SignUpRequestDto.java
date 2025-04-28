@@ -1,5 +1,6 @@
 package com.springboot.escape.data.dto;
 
+import com.springboot.escape.config.annotation.ValidRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -22,6 +23,7 @@ public class SignUpRequestDto {
     private String password;
     @NotBlank(message = "이름을 입력하세요.")
     private String name;
-    @NotBlank
+    @NotBlank(message = "권한을 입력하세요.")
+    @ValidRole
     private String role;
 }
