@@ -1,6 +1,7 @@
 package com.springboot.escape.config.security;
 
 import com.springboot.escape.domain.user.constant.RoleEnum;
+import com.springboot.escape.global.constant.ApiPrefix;
 import jakarta.annotation.Nullable;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -19,19 +20,19 @@ import static org.springframework.http.HttpMethod.POST;
 public class RequestMatcherHolder {
     private static final List<RequestInfo> REQUEST_INFO_LIST = List.of(
             // auth
-            new RequestInfo(POST, "/auth/sign-in", null),
-            new RequestInfo(POST, "/users/sign-up", null),
-            new RequestInfo(POST, "/auth/reissue", null),
-            new RequestInfo(GET, "/auth/exception", null),
+            new RequestInfo(POST,   ApiPrefix.API + "/auth/sign-in", null),
+            new RequestInfo(POST,   ApiPrefix.API + "/users/sign-up", null),
+            new RequestInfo(POST,   ApiPrefix.API + "/auth/reissue", null),
+            new RequestInfo(GET,    ApiPrefix.API + "/auth/exception", null),
 
             // swagger
-            new RequestInfo(GET, "/v3/api-docs/**", null),
-            new RequestInfo(GET, "/swagger-ui.html", null),
-            new RequestInfo(GET, "/swagger-ui/**", null),
+            new RequestInfo(GET,    ApiPrefix.API + "/v3/api-docs/**", null),
+            new RequestInfo(GET,    ApiPrefix.API + "/swagger-ui.html", null),
+            new RequestInfo(GET,    ApiPrefix.API + "/swagger-ui/**", null),
 
             // temp
-            new RequestInfo(GET, "/temp/user", RoleEnum.USER),
-            new RequestInfo(GET, "/temp/admin", RoleEnum.ADMIN)
+            new RequestInfo(GET,    ApiPrefix.API + "/temp/user", RoleEnum.USER),
+            new RequestInfo(GET,    ApiPrefix.API + "/temp/admin", RoleEnum.ADMIN)
     );
     private final ConcurrentHashMap<String, RequestMatcher> reqMatcherCacheMap = new ConcurrentHashMap<>();
 

@@ -1,5 +1,6 @@
 package com.springboot.escape.domain.user.controller;
 
+import com.springboot.escape.global.constant.ApiPrefix;
 import com.springboot.escape.response.ApiResponse;
 import com.springboot.escape.domain.user.dto.SignUpRequestDto;
 import com.springboot.escape.domain.user.service.UserService;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(ApiPrefix.API + "/users")
 public class UserController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(UserController.class);

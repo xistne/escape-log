@@ -3,6 +3,7 @@ package com.springboot.escape.domain.auth.controller;
 import com.springboot.escape.domain.auth.dto.SignInRequestDto;
 import com.springboot.escape.domain.auth.dto.SignInResponseDto;
 import com.springboot.escape.domain.auth.exception.AuthErrorCode;
+import com.springboot.escape.global.constant.ApiPrefix;
 import com.springboot.escape.response.ApiResponse;
 import com.springboot.escape.domain.auth.service.AuthService;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(ApiPrefix.API + "/auth")
 public class AuthController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);

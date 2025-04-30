@@ -1,5 +1,6 @@
 package com.springboot.escape.config.security;
 
+import com.springboot.escape.global.constant.ApiPrefix;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -17,6 +18,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         LOGGER.info("[handle] 접근이 막혔을 경우 경로 리다이렉트");
-        response.sendRedirect("/auth/exception");
+        response.sendRedirect(ApiPrefix.API + "/auth/exception");
     }
 }
