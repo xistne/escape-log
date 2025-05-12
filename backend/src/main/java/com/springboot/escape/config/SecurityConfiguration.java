@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class SecurityConfiguration {
@@ -21,10 +22,12 @@ public class SecurityConfiguration {
     private final Logger LOGGER = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RequestMatcherHolder requestMatcherHolder;
+    private final CorsConfigurationSource corsConfigurationSource;
 
-    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter, RequestMatcherHolder requestMatcherHolder) {
+    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter, RequestMatcherHolder requestMatcherHolder, CorsConfigurationSource corsConfigurationSource) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.requestMatcherHolder = requestMatcherHolder;
+        this.corsConfigurationSource = corsConfigurationSource;
     }
 
     @Bean
@@ -35,6 +38,7 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf((csrfConfig)->
                         csrfConfig.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(httpbc -> httpbc
