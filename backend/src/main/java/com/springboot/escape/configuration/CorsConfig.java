@@ -1,4 +1,4 @@
-package com.springboot.escape.config;
+package com.springboot.escape.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.cors.CorsConfiguration;

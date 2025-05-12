@@ -1,6 +1,6 @@
 package com.springboot.escape.domain.auth.service;
 
-import com.springboot.escape.config.security.JwtTokenProvider;
+import com.springboot.escape.configuration.security.JwtTokenProvider;
 import com.springboot.escape.domain.auth.dto.SignInRequestDto;
 import com.springboot.escape.domain.auth.dto.SignInResponseDto;
 import com.springboot.escape.domain.user.entity.User;

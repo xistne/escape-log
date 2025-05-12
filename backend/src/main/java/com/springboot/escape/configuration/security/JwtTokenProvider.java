@@ -1,4 +1,4 @@
-package com.springboot.escape.config.security;
+package com.springboot.escape.configuration.security;
 
 import com.springboot.escape.domain.user.constant.RoleEnum;
 import com.springboot.escape.domain.auth.exception.AuthErrorCode;

@@ -1,4 +1,4 @@
-package com.springboot.escape.config.security;
+package com.springboot.escape.configuration.security;
 
 import com.springboot.escape.global.constant.ApiPrefix;
 import jakarta.servlet.http.HttpServletRequest;

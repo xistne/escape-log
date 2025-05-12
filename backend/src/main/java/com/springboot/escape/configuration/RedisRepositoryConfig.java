@@ -1,4 +1,4 @@
-package com.springboot.escape.config;
+package com.springboot.escape.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableRedisRepositories
-public class RedisRepositoryConfiguration {
+public class RedisRepositoryConfig {
     @Value("${spring.data.redis.host}")
     private String host;
 
