@@ -1,4 +1,4 @@
-package com.springboot.escape.config.security;
+package com.springboot.escape.configuration.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

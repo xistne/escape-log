@@ -1,9 +1,9 @@
-package com.springboot.escape.config;
+package com.springboot.escape.configuration;
 
-import com.springboot.escape.config.security.CustomAccessDeniedHandler;
-import com.springboot.escape.config.security.CustomAuthenticationEntryPoint;
-import com.springboot.escape.config.security.JwtAuthenticationFilter;
-import com.springboot.escape.config.security.RequestMatcherHolder;
+import com.springboot.escape.configuration.security.CustomAccessDeniedHandler;
+import com.springboot.escape.configuration.security.CustomAuthenticationEntryPoint;
+import com.springboot.escape.configuration.security.JwtAuthenticationFilter;
+import com.springboot.escape.configuration.security.RequestMatcherHolder;
 import com.springboot.escape.domain.user.constant.RoleEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,17 +14,20 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RequestMatcherHolder requestMatcherHolder;
+    private final CorsConfigurationSource corsConfigurationSource;
 
-    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter, RequestMatcherHolder requestMatcherHolder) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, RequestMatcherHolder requestMatcherHolder, CorsConfigurationSource corsConfigurationSource) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.requestMatcherHolder = requestMatcherHolder;
+        this.corsConfigurationSource = corsConfigurationSource;
     }
 
     @Bean
@@ -35,6 +38,7 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf((csrfConfig)->
                         csrfConfig.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(httpbc -> httpbc
