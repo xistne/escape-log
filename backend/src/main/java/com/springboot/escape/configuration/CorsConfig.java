@@ -13,7 +13,7 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of("*"));  // DESC : 모든 도메인 허용
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTION")); // DESC : 모든 메서드 허용
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // DESC : 모든 메서드 허용
         corsConfiguration.setAllowedHeaders(List.of("*"));  // DESC : 모든 헤더 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
