@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void signUp(SignUpRequestDto signUpRequestDto) {
-        LOGGER.info("[signUp] 회원 가입 정보 전달");
         RoleEnum userRoleEnum = signUpRequestDto.getRole().equalsIgnoreCase("admin")
                 ? RoleEnum.ADMIN
                 : RoleEnum.USER;
@@ -41,12 +40,6 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
                 .role(userRoleEnum)
                 .build();
-        User savedUser = userRepository.save(user);
-        if (!savedUser.getName().isEmpty()) {
-            LOGGER.info("[signUp] 정상 처리 완료");
-        } else {
-            LOGGER.info("[signUp] 실패 처리 완료");
-            throw UserErrorCode.SIGN_UP_FAILED.defaultException();
-        }
+        userRepository.save(user);
     }
 }
