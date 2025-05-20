@@ -26,9 +26,9 @@ public class RequestMatcherHolder {
             new RequestInfo(GET,    ApiPrefix.API + "/auth/exception", null),
 
             // swagger
-            new RequestInfo(GET,    ApiPrefix.API + "/v3/api-docs/**", null),
-            new RequestInfo(GET,    ApiPrefix.API + "/swagger-ui.html", null),
-            new RequestInfo(GET,    ApiPrefix.API + "/swagger-ui/**", null),
+            new RequestInfo(GET, "/v3/api-docs/**", null),
+            new RequestInfo(GET, "/swagger-ui.html", null),
+            new RequestInfo(GET, "/swagger-ui/**", null),
 
             // temp
             new RequestInfo(GET,    ApiPrefix.API + "/temp/user", RoleEnum.USER),
