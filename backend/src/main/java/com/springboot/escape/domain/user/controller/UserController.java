@@ -4,6 +4,7 @@ import com.springboot.escape.global.constant.ApiPrefix;
 import com.springboot.escape.response.ApiResponse;
 import com.springboot.escape.domain.user.dto.SignUpRequestDto;
 import com.springboot.escape.domain.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "회원가입", description = "")
     @PostMapping(value = "/sign-up")
     public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto) {
         userService.signUp(signUpRequestDto);
